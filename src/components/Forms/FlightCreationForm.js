@@ -4,7 +4,7 @@ import {
 
     MenuItem,
     FormControl,
-    Grid, Paper,
+    Grid, Paper, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions,
 } from '@mui/material';
 import {LoadingButton} from '@mui/lab';
 import {styled, useTheme} from "@mui/material/styles";
@@ -40,6 +40,15 @@ const validationSchema = yup.object({
 });
 const formSubmition = (values, {setSubmitting}) => {
     console.log("trying to submit:", values);
+    if (values.start && values.end) {
+        let start = new Date(values.start);
+        let end = new Date(values.end);
+        if (start >= end) {
+            window.alert("Start time must smaller than arrival time");
+            setSubmitting(false)
+            return;
+        }
+    }
     let rows = [];
     for (let i = 0; i < parseInt(values.rows); i++) {
         rows.push({
@@ -65,6 +74,7 @@ const formSubmition = (values, {setSubmitting}) => {
             })
     } catch (e) {
         console.log("error in save flight:", e);
+        setSubmitting(false);
     }
     console.log()
 }
@@ -72,6 +82,7 @@ const formSubmition = (values, {setSubmitting}) => {
 
 export default function FlightCreationForm() {
     const theme = useTheme();
+  
     const [airlines, setAirlines] = useState([]);
     const [chosenAirline, setChosenAirline] = useState(0);
     const [aircraft, setAircraft] = useState([]);
@@ -270,6 +281,8 @@ export default function FlightCreationForm() {
                                                 onChange={(e) => {
                                                     let start = new Date(e.$d);
                                                     setFieldValue("start", start.toLocaleString());
+                                                    // setTime("start", start.toLocaleString());
+
                                                 }}
                                             />
                                         </FormControl>
@@ -282,6 +295,7 @@ export default function FlightCreationForm() {
                                                    onChange={(e) => {
                                                        let end = new Date(e.$d);
                                                        setFieldValue("end", end.toLocaleString());
+                                                    //    setTimeEnd("end", end.toLocaleString());
                                                    }}/>
                                         </FormControl>
                                     </Grid>
@@ -295,7 +309,7 @@ export default function FlightCreationForm() {
                                                 onChange={(e) => {
                                                     console.log(e.target.value);
                                                     setRowNumber(parseInt(e.target.value));
-                                                    setFieldValue("rows", e.target.value)
+                                                    setFieldValue("rows", e.target.value);
                                                 }}
                                             />
                                         </FormControl>
@@ -326,9 +340,9 @@ export default function FlightCreationForm() {
                                             />
                                         </FormControl>
                                     </Grid>
-
+                                   
                                     <Grid item xs={4} sm={4} md={6}>
-                                        <LoadingButton fullWidth size="large" type="submit" variant="contained"
+                                        <LoadingButton fullWidth size="large" type="button" variant="contained"
                                                        onClick={
                                                            submitForm
                                                        }
@@ -341,7 +355,6 @@ export default function FlightCreationForm() {
                                             <span>{(isSubmitting) ? "Saving…" : "Save this flight"}</span>
                                         </LoadingButton>
                                     </Grid>
-
                                     {rows.map((row, index) => (
                                         <Grid item xs={4} sm={8} md={12}>
                                             <Grid container spacing={{xs: 1, md: 2}}>

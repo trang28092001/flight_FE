@@ -203,6 +203,7 @@ export default function FinalizeForm(props) {
                                         Thank you!
                                     </DialogContent>
                                     <DialogActions>
+                                        <Button onClick={() => {navigate("/")}} autoFocus>OK</Button>
                                     </DialogActions>
                                 </Dialog>
                             </Form>
